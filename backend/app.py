@@ -1,5 +1,6 @@
 from flask import Flask, request, escape, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql.expression import func
 import os
 
 app = Flask(__name__)
@@ -32,12 +33,21 @@ def list_quotes():
     try:
         quotes = Quote.query.all()
         jsonified = jsonify(quotes=[e.serialize() for e in quotes])
-        print(jsonified)
         return jsonified, 200
     except Exception as e:
         print(e)
         return "error", 400
 
+@app.route('/random-quote', methods=["GET"])
+def random_quote():
+    try:
+        quote = Quote.query.order_by(func.random()).limit(1).all()
+        print(quote)
+        jsonified = jsonify(quotes=[e.serialize() for e in quote])
+        return jsonified, 200
+    except Exception as e:
+        print(e)
+        return "error", 400
 
 if __name__ == '__main__':
     app.run()
