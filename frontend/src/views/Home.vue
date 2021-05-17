@@ -39,6 +39,8 @@ export default {
       const quote = response.data.quotes[0]
       instance.quoteText = quote.text
       instance.quoteAuthor = quote.author
+    }).catch(function(error) {
+      console.log(error)
     })
   }
 }
@@ -87,6 +89,9 @@ export default {
   z-index: 1;
 }
 
+</style>
+
+<style scoped>
 .button {
   display: none !important;
 }
