@@ -122,7 +122,8 @@ def token_required(f):
             user = User.query.filter_by(email=data['sub']).first()
             if not user:
                 raise RuntimeError('User not found')
-            return f(user, *args, **kwargs)
+            #return f(user, *args, **kwargs) -> not using, but could return user object
+            return f(*args, **kwargs)
         except jwt.ExpiredSignatureError:
             return jsonify(expired_msg), 401 # 401 is Unauthorized HTTP status code
         except (jwt.InvalidTokenError, Exception) as e:
@@ -134,8 +135,7 @@ def token_required(f):
 
 @app.route('/add-quote', methods=['POST'])
 @token_required
-def add_quote(*args):
-    print(*args)
+def add_quote():
     text = escape(request.get_json(force = True)["text"])
     author = escape(request.get_json(force = True)["author"])
     try:
@@ -151,7 +151,7 @@ def add_quote(*args):
         return "error", 400
 
 @app.route('/delete-quote/<id>', methods=['POST'])
-#@token_required - messing with arguments
+@token_required
 def delete_quote(id):
     #id = kwargs["id"]
     try:
@@ -166,8 +166,7 @@ def delete_quote(id):
 
 @app.route('/list-quotes', methods=["GET"])
 @token_required
-def list_quotes(*args):
-    print(*args)
+def list_quotes():
     try:
         quotes = Quote.query.all()
         jsonified = jsonify(quotes=[e.serialize() for e in quotes])
