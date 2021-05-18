@@ -74,6 +74,7 @@ export default {
     getQuotes() {
       const instance = this
       axios.defaults.baseURL = 'http://localhost:5000';
+      axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.jwt.token}`;
       axios.get("/list-quotes").then(function (response) {
         instance.tableData = response.data.quotes
         instance.isLoading = false
@@ -85,6 +86,7 @@ export default {
     addQuote() {
       const instance = this
       axios.defaults.baseURL = 'http://localhost:5000';
+      axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.jwt.token}`;
       axios.post("/add-quote", {
         text: instance.formText,
         author: instance.formAuthor
@@ -104,7 +106,20 @@ export default {
       })
     },
     deleteQuote() {
-
+      const instance = this
+      axios.defaults.baseURL = 'http://localhost:5000';
+      axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.jwt.token}`;
+      axios.post(`/delete-quote/${instance.selected.id}`).then(function () {
+        instance.isLoading = true
+        const sleep = (milliseconds) => {
+          return new Promise(resolve => setTimeout(resolve, milliseconds))
+        }
+        sleep(100).then(function() {
+          instance.getQuotes()
+        })
+      }).catch(function(error) {
+        console.log(error)
+      })
     }
   },
   mounted() {
