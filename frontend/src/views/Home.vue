@@ -5,7 +5,7 @@
       <h1 class="title is-1 has-text-white" style="z-index: 1; position: relative">"{{quoteText}}"</h1>
       <h4 class="subtitle has-text-white" style="z-index: 1; position: relative">{{quoteAuthor}}</h4>
     </div>
-    <v-vanta effect="fog" :options=vantaOptions></v-vanta>
+    <v-vanta v-if="showVanta" effect="fog" :options=vantaOptions></v-vanta>
   </div>
 </template>
 
@@ -22,6 +22,7 @@ export default {
     return {
       quoteText: "",
       quoteAuthor: "",
+      showVanta: true, //for performance
       vantaOptions: {
         mouseControls: false,
         touchControls: false,
@@ -33,6 +34,8 @@ export default {
     };
   },
   mounted() {
+    this.showVanta = true
+
     const instance = this
     axios.defaults.baseURL = 'http://localhost:5000';
     axios.get("/random-quote").then(function (response) {
@@ -42,6 +45,9 @@ export default {
     }).catch(function(error) {
       console.log(error)
     })
+  },
+  beforeDestroy() {
+    this.showVanta = false
   }
 }
 </script>
