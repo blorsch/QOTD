@@ -37,7 +37,7 @@ export default {
     this.showVanta = true
 
     const instance = this
-    axios.defaults.baseURL = 'http://localhost:5000';
+    axios.defaults.baseURL = process.env.VUE_APP_API_ROOT;
     axios.get("/random-quote").then(function (response) {
       const quote = response.data.quotes[0]
       instance.quoteText = quote.text

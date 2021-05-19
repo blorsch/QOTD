@@ -73,8 +73,6 @@ export default {
   methods: {
     getQuotes() {
       const instance = this
-      axios.defaults.baseURL = 'http://localhost:5000';
-      axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.jwt.token}`;
       axios.get("/list-quotes").then(function (response) {
         instance.tableData = response.data.quotes
         instance.isLoading = false
@@ -85,8 +83,6 @@ export default {
     },
     addQuote() {
       const instance = this
-      axios.defaults.baseURL = 'http://localhost:5000';
-      axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.jwt.token}`;
       axios.post("/add-quote", {
         text: instance.formText,
         author: instance.formAuthor
@@ -107,8 +103,6 @@ export default {
     },
     deleteQuote() {
       const instance = this
-      axios.defaults.baseURL = 'http://localhost:5000';
-      axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.jwt.token}`;
       axios.post(`/delete-quote/${instance.selected.id}`).then(function () {
         instance.isLoading = true
         const sleep = (milliseconds) => {
@@ -123,6 +117,11 @@ export default {
     }
   },
   mounted() {
+    //setup axios
+    axios.defaults.baseURL = process.env.VUE_APP_API_ROOT;
+    axios.defaults.headers.common['Authorization'] = `Bearer ${this.$store.state.jwt.token}`;
+
+    //get data
     this.getQuotes()
   }
 }
