@@ -31,31 +31,39 @@
     </section>
     <section>
       <div class="container" style="margin-top: 30px; margin-bottom: 30px">
-        <b-table :loading="isLoading" :data="tableData" :columns="tableColumns" :selected.sync="selected"></b-table>
+        <b-table style="margin-bottom: 10px" :loading="isLoading" :data="tableData" :columns="tableColumns" :selected.sync="selected"></b-table>
+        <a style="margin-right: 30px" @click="isEditModalActive = true">Edit selection</a>
         <a style="margin-right: 30px; color: #f14668" @click="deleteQuote">Delete selection</a>
         <a @click="selected = null">Clear selection</a>
       </div>
     </section>
+    <b-modal has-modal-card v-model="isEditModalActive">
+      <EditQuoteModal v-on:close="isEditModalActive = false" v-on:updatedQuote="getQuotes()" :form-author="selected.author" :form-text="selected.text" :id="selected.id"/>
+    </b-modal>
   </div>
 </template>
 
 <script>
+import EditQuoteModal from "@/views/EditQuoteModal";
+
 const axios = require('axios');
 
 export default {
   name: 'App',
+  components: {EditQuoteModal},
   data: function() {
     return {
       formText: "",
       formAuthor: "",
+      isEditModalActive: false,
       isLoading: true,
       tableData: [],
       tableColumns: [
-        /*{
+        {
           field: 'id',
           label: 'ID',
           centered: true
-        },*/
+        },
         {
           field: 'text',
           label: 'Quote',
@@ -74,7 +82,8 @@ export default {
     getQuotes() {
       const instance = this
       axios.get("/list-quotes").then(function (response) {
-        instance.tableData = response.data.quotes
+        const sorted = response.data.quotes.sort((a, b) => (a.id > b.id) ? 1 : -1) // https://flaviocopes.com/how-to-sort-array-of-objects-by-property-javascript/
+        instance.tableData = sorted
         instance.isLoading = false
       }).catch(function(error) {
         console.log(error)

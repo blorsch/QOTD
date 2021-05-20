@@ -84,7 +84,6 @@ def register():
 
 @app.route('/login', methods=['POST'])
 def login():
-    print("here")
     data = request.get_json()
     user = User.authenticate(**data)
 
@@ -153,11 +152,22 @@ def add_quote():
 @app.route('/delete-quote/<id>', methods=['POST'])
 @token_required
 def delete_quote(id):
-    #id = kwargs["id"]
     try:
         to_delete = Quote.query.filter_by(id=escape(id)).first()
-        print(to_delete)
         db.session.delete(to_delete)
+        db.session.commit()
+        return "success", 200
+    except Exception as e:
+        print(e)
+        return "error", 400
+
+@app.route('/update-quote/<update_id>', methods=['POST'])
+#@token_required
+def update_quote(update_id):
+    try:
+        json_data = request.get_json()
+        to_update = Quote.query.filter_by(id=escape(update_id))
+        to_update.update(dict(json_data))
         db.session.commit()
         return "success", 200
     except Exception as e:
@@ -179,7 +189,6 @@ def list_quotes():
 def random_quote():
     try:
         quote = Quote.query.order_by(func.random()).limit(1).all()
-        print(quote)
         jsonified = jsonify(quotes=[e.serialize() for e in quote])
         return jsonified, 200
     except Exception as e:
