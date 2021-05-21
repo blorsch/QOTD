@@ -1,0 +1,15 @@
+# https://testdriven.io/blog/running-flask-on-kubernetes/#vue
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  labels:
+    service: frontend
+  name: frontend
+spec:
+  selector:
+    app: frontend
+  ports:
+  - port: 80
+    targetPort: 80

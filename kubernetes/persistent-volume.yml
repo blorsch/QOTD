@@ -1,0 +1,16 @@
+# https://testdriven.io/blog/running-flask-on-kubernetes/#minikube
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 2Gi
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data/postgres-pv"

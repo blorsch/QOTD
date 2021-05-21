@@ -1,0 +1,16 @@
+# https://testdriven.io/blog/running-flask-on-kubernetes/#minikube
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  labels:
+    type: local
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  volumeName: postgres-pv
+  storageClassName: standard
