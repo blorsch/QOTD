@@ -1,4 +1,4 @@
-from flask import Flask, request, escape, jsonify, make_response, current_app
+from flask import Flask, request, escape, jsonify, make_response, current_app, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql.expression import func
 import os
@@ -73,7 +73,7 @@ def crossdomain(origin=None, methods=None, headers=None, max_age=21600,
 
 # https://stackabuse.com/single-page-apps-with-vue-js-and-flask-jwt-authentication/
 
-@app.route('/register', methods=['POST'])
+@app.route('/api/register', methods=['POST'])
 def register():
     data = request.get_json()
     user = User(**data)
@@ -82,7 +82,7 @@ def register():
     return jsonify(user.serialize()), 201
 
 
-@app.route('/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
     user = User.authenticate(**data)
@@ -132,7 +132,7 @@ def token_required(f):
 
 # start unique code
 
-@app.route('/add-quote', methods=['POST'])
+@app.route('/api/add-quote', methods=['POST'])
 @token_required
 def add_quote():
     text = escape(request.get_json(force = True)["text"])
@@ -149,7 +149,7 @@ def add_quote():
         print(e)
         return "error", 400
 
-@app.route('/delete-quote/<id>', methods=['POST'])
+@app.route('/api/delete-quote/<id>', methods=['POST'])
 @token_required
 def delete_quote(id):
     try:
@@ -161,7 +161,7 @@ def delete_quote(id):
         print(e)
         return "error", 400
 
-@app.route('/update-quote/<update_id>', methods=['POST'])
+@app.route('/api/update-quote/<update_id>', methods=['POST'])
 #@token_required
 def update_quote(update_id):
     try:
@@ -174,7 +174,7 @@ def update_quote(update_id):
         print(e)
         return "error", 400
 
-@app.route('/list-quotes', methods=["GET"])
+@app.route('/api/list-quotes', methods=["GET"])
 @token_required
 def list_quotes():
     try:
@@ -185,7 +185,7 @@ def list_quotes():
         print(e)
         return "error", 400
 
-@app.route('/random-quote', methods=["GET"])
+@app.route('/api/random-quote', methods=["GET"])
 def random_quote():
     try:
         quote = Quote.query.order_by(func.random()).limit(1).all()
